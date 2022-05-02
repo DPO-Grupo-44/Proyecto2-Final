@@ -3,24 +3,26 @@ package Mundo;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+
+
 public class Proyecto {
 
     private String nombre;
     private String descripcion;
     private LocalDateTime fechainicio;
-    private Participante dueño;
+    private Participante dueno;
     private ArrayList<Actividad> listaactividades;
     private ArrayList<Participante> listaparticipantes;
     private LocalDateTime fechafin;
     private ArrayList<String> tipos;
 
     public Proyecto(String tnombre, String tdescripcion, LocalDateTime tfechai,
-                    Participante tdueño, LocalDateTime fechaf) {
+                    Participante tdueno, LocalDateTime fechaf) {
         nombre = tnombre;
         descripcion = tdescripcion;
         fechainicio = tfechai;
         fechafin = fechaf;
-        dueño = tdueño;
+        dueno = tdueno;
         listaparticipantes = new ArrayList<Participante>();
         listaactividades = new ArrayList<Actividad>();
         tipos = new ArrayList<String>();
@@ -55,8 +57,8 @@ public class Proyecto {
         return listaparticipantes;
     }
 
-    public void setDueño(Participante tdueño) {
-        dueño = tdueño;
+    public void setDueno(Participante tdueno) {
+        dueno = tdueno;
     }
 
     public void agregarTipos(String ttipo) {
@@ -74,4 +76,7 @@ public class Proyecto {
         }
         return res;
     }
+    public ArrayList<Actividad> getActividades() {
+		return listaactividades;
+	}
 }

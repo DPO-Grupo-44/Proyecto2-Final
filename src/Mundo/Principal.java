@@ -2,17 +2,22 @@ package Mundo;
 
 import Interfaz.VentanaPrincipal;
 
+
+import java.awt.Color;
 import java.io.*;
 import java.time.*;
 import java.util.ArrayList;
 
+import javax.swing.JPanel;
+
 public class Principal {
 
     Laboratorio lab = new Laboratorio();
+    CargaDeDatos cargar = new CargaDeDatos();
 
     public static void main(String [] args) {
 
-        //Principal Consola = new Principal();
+        //Principal Console = new Principal();
         VentanaPrincipal Ventana = new VentanaPrincipal();
         Ventana.setVisible(true);
         //Consola.ejecutarAplicacion();
@@ -27,7 +32,8 @@ public class Principal {
                 int opcion_seleccionada = Integer.parseInt(input("Por favor seleccione una opciÃ³n"));
                 ArrayList<Proyecto> proyectosdisp = lab.getProyectos();
                 if (opcion_seleccionada == 1) {
-
+                	cargar.leerArchivo_proyectos(lab);
+    				cargar.leerArchivo_proyectos(lab);
                 }
                 else if (opcion_seleccionada == 2)
                 {
@@ -58,8 +64,31 @@ public class Principal {
                 }
 
                 else if (opcion_seleccionada == 5) {
-                    continuar = false;
+                	int pos = mostrarProyectos(proyectosdisp);
+    				Proyecto ubicacion = proyectosdisp.get(pos);
+    				ArrayList<Actividad>lista = ubicacion.getActividades();
+    				if (lista.size() < 1) {
+    					System.out.println("No hay actividades disponibles, cree una primero");
+    				}
+    				else {
+    					int posact = mostrarActividades(lista);
+    					Actividad ubact = lista.get(posact);
+    					String res = input("Seleccione la hora");
+    					ubact.setHora(res);
+    					System.out.println(ubact.calcularDuracion());
+    				}
                 }
+    				else if (opcion_seleccionada == 6) {
+    					int pos = mostrarProyectos(proyectosdisp);
+    					Proyecto ubicacion = proyectosdisp.get(pos);
+    					ArrayList<Actividad> lista = ubicacion.getActividades();
+    					crearCalendario(lista);
+    				}
+    				
+    				else if (opcion_seleccionada == 7) {
+    					continuar = false;
+    				}
+    				
 
                 else {
                     System.out.println("Opcion no valida, por favor seleccione otra");
@@ -90,10 +119,10 @@ public class Principal {
         Proyecto proyectoNuevo = new Proyecto(nombreproy, descrproy, LocalDateTime.now(),
                 null, LocalDateTime.now());
         lab.agregarProyectos(proyectoNuevo);
-        System.out.println("Agregue un dueño a su proyecto");
-        Participante dueño = crearnuevoParticipante();
-        proyectoNuevo.setDueño(dueño);
-        proyectoNuevo.agregarParticipantes(dueño);
+        System.out.println("Agregue un dueno a su proyecto");
+        Participante dueno = crearnuevoParticipante();
+        proyectoNuevo.setDueno(dueno);
+        proyectoNuevo.agregarParticipantes(dueno);
         agregarTipos(proyectoNuevo);
 
 
@@ -279,4 +308,77 @@ public class Principal {
         int respuesta = Integer.parseInt(input("Numero"));
         return respuesta;
     }
+	
+	public int mostrarActividades(ArrayList<Actividad> actividadesdisp) {
+		System.out.println("Seleccione la actividad de la que va a realizar cambios");
+		for (int j=0;j<actividadesdisp.size();j++) {
+			System.out.println(j+"-" + " " + actividadesdisp.get(j).getNombre());
+	    }
+		int respuesta = Integer.parseInt(input("Numero"));
+		return respuesta;
+	}	
+	
+	public void crearCalendario(ArrayList<Actividad> actividades) {
+		int ano = 2022;
+		JPanel calendario = new JPanel();
+		calendario.setBackground(Color.WHITE);
+		
+		for(int i = 1; i <= 12; i++) {
+			
+			System.out.println("\nMes: "+ i );
+			System.out.println("Dom\tLun\tMar\tMier\tJue\tVie\tSab");
+			
+			int dias = diasMes(ano, i);
+			int conDia = 0;
+			int z = zeller(ano, i);
+			for(int k = 0; k < z; k++) {
+				conDia++;
+				System.out.print("\t");
+			}
+			
+			
+			for(int j =1; j <= dias; j++) {
+				String res = j + "\t";
+				int l = 1;
+				for(l= 1; l <= actividades.size(); l++) {
+					int fecha = actividades.get(l-1).getFecha().getMonthValue();
+					int dia = actividades.get(l-1).getFecha().getDayOfMonth();
+					if((fecha == i)&&(dia == j)) {
+						res = j+ "*" + "\t"; 
+					}
+				}
+				System.out.print(res);
+				conDia++;
+				if(conDia == 7) {
+					System.out.println();
+					conDia = 0;
+				}
+			}
+		}
+		
+	}
+	
+	private static int zeller(int ano, int mes) {
+		int a = (14 - mes) / 12;
+		int y = ano - a;
+		int m = mes + 12 * a - 2;
+		int dia = 1, d;
+		d = (dia + y + y / 4 - y / 100 + y / 400 + (31 * m) / 12) % 7;
+		return (d);
+	}
+	
+	public static int diasMes(int ano, int mes) {
+		if(mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || 	mes == 10 || mes == 12) {
+			return 31;
+		}
+		else if(mes == 2) {
+			return 28;
+		}
+		else {
+			return 30;
+		}
+		
+	}
+	
 }
+
